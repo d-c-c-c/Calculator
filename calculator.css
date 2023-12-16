@@ -136,6 +136,10 @@ body {
     top: 0;
     z-index: 1;
   }
+
+  .calculatorKeys > .is-depressed {
+    background-color: rgba(151, 151, 151, 0.2);
+  }
   
   .keyOperator {
     background-color: #eee;
