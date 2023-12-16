@@ -47,6 +47,21 @@
         //Instantiating clear button value
         const clearButton = document.getElementById('clearButton');
        
+        //Evaluate the input expression
+        const calculate = (num1, operator, num2) => {
+            let result = ''
+            if (operator === "add") {
+                result = parseFloat(num1) + parseFloat(num2)
+            } else if (operator === "subtract") {
+                result = parseFloat(num1) - parseFloat(num2)
+            } else if (operator === "multiply") {
+                result = parseFloat(num1) * parseFloat(num2)
+            } else if (operator === "divide") {
+                result = parseFloat(num1) / parseFloat(num2) //Come back to this to handle undefined results probably********
+            }
+            return result
+        }
+
         // Event listener
         keys.addEventListener('click', e => {
             if (e.target.matches('button')) {
@@ -120,7 +135,10 @@
                 const firstValue = calculator.dataset.firstValue
                 const secondValue = displayedNumber
                 const operator = calculator.dataset.operator
+
+                display.textContent = calculate(firstValue, operator, secondValue)
                 console.log(firstValue, operator, secondValue)
+                console.log(calculate(firstValue, operator, secondValue))
                 console.log("Equals key pressed")
             } 
             
