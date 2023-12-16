@@ -153,3 +153,16 @@ body {
     grid-column: -2;
     grid-row: 2 / span 4;
   }
+
+  /* Hover styles */
+  .keyOperator:hover {
+    background-color: #c5c5c5;
+  }
+
+  .calculatorKeys > *:hover {
+    background-color: #c5c5c5;
+  }
+
+  .keyEqual:hover {
+    background-image: linear-gradient(to bottom, #d36f55, #c95929);
+  }
