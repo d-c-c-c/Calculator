@@ -49,17 +49,12 @@
        
         //Evaluate the input expression
         const calculate = (num1, operator, num2) => {
-            let result = ''
-            if (operator === "add") {
-                result = parseFloat(num1) + parseFloat(num2)
-            } else if (operator === "subtract") {
-                result = parseFloat(num1) - parseFloat(num2)
-            } else if (operator === "multiply") {
-                result = parseFloat(num1) * parseFloat(num2)
-            } else if (operator === "divide") {
-                result = parseFloat(num1) / parseFloat(num2) //Come back to this to handle undefined results probably********
-            }
-            return result
+            const firstNum = parseFloat(num1)
+            const secondNum = parseFloat(num2)
+            if (operator === 'add') return firstNum + secondNum
+            if (operator === 'subtract') return firstNum - secondNum
+            if (operator === 'multiply') return firstNum * secondNum
+            if (operator === 'divide') return firstNum / secondNum
         }
 
         // Event listener
