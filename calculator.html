@@ -74,6 +74,8 @@
 
             //Once key is pressed again, remove is-depressed class from all keys
             Array.from(key.parentNode.children).forEach(i => i.classList.remove("is-depressed"))
+
+            
             // If the key pressed was an operator button
             if(
                 action === "add" ||
@@ -81,16 +83,32 @@
                 action === "multiply" ||
                 action === "divide"
             ) {
+                const firstValue = calculator.dataset.firstValue
+                const secondValue = displayedNumber
+                const operator = calculator.dataset.operator
+
+                // Check that the first value and the operator exist; Second value will always exist when calculate is called
+                if (firstValue && operator && 
+                    previousKeyType !== 'operator' && 
+                    previousKeyType !== 'calculate' && 
+                    previousKeyType !== 'number') {
+                    const calcValue = calculate(firstValue, operator, secondValue)
+                    display.textContent = calcValue
+
+                    //Update calculated value to first value
+                    calculator.dataset.firstValue = calcValue
+                } else {
+                    calculator.dataset.firstValue = displayedNumber // If there are no calculations, set firstValue to the current displayed number
+                }
                 key.classList.add("is-depressed")
                 console.log("Operator key pressed")
                 
+                
                 //Select the previous operator
-                calculator.dataset.firstValue = displayedNumber
                 calculator.dataset.previousKeyType = 'operator'
                 calculator.dataset.operator = action // operator we will use for calculation
             } 
 
-            
             
             console.log(previousKeyType)
             // If the key pressed was a number button
@@ -98,9 +116,9 @@
             if (!action) {
             // If there is nothing in the display, replace 0 with the selected number, else append that number onto the display
             // Swap Clear button from AC to CE
-                if (displayedNumber === "0" || previousKeyType === 'operator') {  
+                if (displayedNumber === "0" || previousKeyType === 'operator' || previousKeyType === 'calculate') {  
                     display.textContent = keyContent;
-                    if (clearButton.textContent === "AC") {
+                    if (keyContent !== '0' && clearButton.textContent === "AC") {
                         clearButton.getElementsByTagName("span")[0].textContent = "CE";
                     }
                     console.log(keyContent + " key pressed")
@@ -114,9 +132,9 @@
             if(action === "decimal") {
                 if (displayedNumber.includes(".")) {
                     //pass
-                } else if (previousKeyType === 'operator') {
+                } else if (previousKeyType === 'operator' || previousKeyType === 'calculate') {
                     display.textContent = '0.'
-                } {
+                } else {
                     display.textContent = displayedNumber + "."
                 }
                 calculator.dataset.previousKeyType = 'decimal'
@@ -129,6 +147,10 @@
                 if (displayedNumber !== "0") {
                     display.textContent = "0";
                     clearButton.getElementsByTagName("span")[0].textContent = "AC"
+                    calculator.dataset.firstValue = ''
+                    calculator.dataset.modValue = ''
+                    calculator.dataset.operator = ''
+                    calculator.dataset.previousKeyType = ''
                     console.log("Display cleared")
                 }
                 calculator.dataset.previousKeyType = 'clear'
@@ -136,17 +158,27 @@
             }
             
             if(action === "calculate") {
-                const firstValue = calculator.dataset.firstValue
-                const secondValue = displayedNumber
+                let firstValue = calculator.dataset.firstValue
+                let secondValue = displayedNumber
                 const operator = calculator.dataset.operator
 
-                display.textContent = calculate(firstValue, operator, secondValue)
+                // Check if the first number is set
+                if (firstValue) {
+                    // If the user clicks the equals sign multiple times, update firstValue to the displayed number
+                    if (previousKeyType === 'calculate') {
+                        firstValue = displayedNumber
+                        secondValue = calculator.dataset.modValue
+                    }
+                    display.textContent = calculate(firstValue, operator, secondValue)
+                }
                 console.log(firstValue, operator, secondValue)
                 console.log(calculate(firstValue, operator, secondValue))
+                calculator.dataset.modValue = secondValue
+                calculator.dataset.previousKeyType = 'calculate'
                 console.log("Equals key pressed")
             } 
             
-            calculator.dataset.previousKeyType = 'calculate'
+            
             }
         });
 
