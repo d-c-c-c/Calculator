@@ -114,9 +114,12 @@
             if(action === "decimal") {
                 if (displayedNumber.includes(".")) {
                     //pass
-                } else {
+                } else if (previousKeyType === 'operator') {
+                    display.textContent = '0.'
+                } {
                     display.textContent = displayedNumber + "."
                 }
+                calculator.dataset.previousKeyType = 'decimal'
                 console.log("Decimal key pressed")
             }
             
@@ -128,6 +131,7 @@
                     clearButton.getElementsByTagName("span")[0].textContent = "AC"
                     console.log("Display cleared")
                 }
+                calculator.dataset.previousKeyType = 'clear'
                 console.log("Clear key pressed")
             }
             
@@ -142,7 +146,7 @@
                 console.log("Equals key pressed")
             } 
             
-           
+            calculator.dataset.previousKeyType = 'calculate'
             }
         });
 
