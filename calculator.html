@@ -94,15 +94,15 @@
         const performCalc = (num1, operator, num2) => {
             switch (operator) {
             case 'add':
-                return num1 + num2
+                return parseFloat(num1) + parseFloat(num2);
             case 'subtract':
-                return num1 - num2
+                return num1 - num2;
             case 'multiply':
-                return num1 * num2
+                return num1 * num2;
             case 'divide': 
-                return num1 / num2
+                return num1 / num2;
             default:
-                return NaN
+                return NaN;
             }
         }
 
@@ -143,7 +143,8 @@
                 modValue,
                 previousKeyType
             } = state
-
+            console.log(keyType)
+            console.log(firstValue, operator, modValue)
             if (keyType === 'number') {
                 return displayedNum === '0' ||
                 previousKeyType === 'operator' ||
@@ -189,8 +190,7 @@
             } = calculator.dataset
 
             calculator.dataset.previousKeyType = keyType
-            console.log(keyType)
-            console.log(firstValue, operator, modValue)
+            
 
             if (keyType === 'operator') {
                 calculator.dataset.operator = key.dataset.action
