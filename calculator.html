@@ -52,7 +52,7 @@
         const calculate = (num1, operator, num2) => {
             const firstNum = parseFloat(num1)
             const secondNum = parseFloat(num2)
-            const result = performCalc(num1, operator, num2)
+            const result = performCalc(firstNum, operator, secondNum)
 
             // Check if the number is very large; If it is, return the number formatted in scientific notation
             return isLargeNumber(result) ? result.toExponential(2) : result;
@@ -167,13 +167,13 @@
                 previousKeyType !== 'operator' &&
                 previousKeyType !== 'calculate'
                 ? calculatedValue
-                : calculatedValue
+                : displayedNum
             }
 
             if (keyType === 'calculate') {
                 calculator.dataset.modValue = firstValue && previousKeyType === 'calculate'
                 ? modValue
-                : calculatedValue
+                : displayedNum
             }
 
             if (keyType === 'clear') {
