@@ -119,6 +119,12 @@
                     return Math.pow(num1, 2);
                 case 'x3':
                     return Math.pow(num1, 3);
+                case 'xy': 
+                    return Math.pow(num1, num2);
+                case 'ex': 
+                    return Math.pow(Math.E, num1);
+                case '10x': 
+                    return Math.pow(10, num1);
                 default: 
                     return NaN;
             }
@@ -175,7 +181,8 @@
             if (keyType === 'number') {
                 if (displayedNum === '0' ||
                 previousKeyType === 'operator' ||
-                previousKeyType === 'calculate'
+                previousKeyType === 'calculate' ||
+                previousKeyType === 'exponent'
                 ){
                     if (keyContent === 'e') {
                         return Math.E.toString()
@@ -210,9 +217,15 @@
             if (keyType === 'exponent') {
                 state.operator = key.dataset.action
                 if (state.operator === 'xy') {
-                    return calculateExponent(firstValue, state.operator, )
-                }
-                return calculateExponent(displayedNum, state.operator)
+                    console.log('first value:',firstValue)
+                    if (firstValue) {
+                        return calculateExponent(firstValue, state.operator, displayedNum)
+                    } else {
+                        return displayedNum
+                    }
+                } else {
+                    return calculateExponent(displayedNum, state.operator)
+                } 
             }
 
             if (keyType === 'clear') return 0
