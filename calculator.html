@@ -25,16 +25,16 @@
             <button class="keyOperator" data-action="multiply"><span>&times;</span></button>
             <button class="keyOperator" data-action="divide"><span>&divide;</span></button>
 
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
+            <button class="keyExponent" data-action="x2"><span>x<sup>2</sup></span></button>
+            <button class="keyExponent" data-action="x3"><span>x<sup>3</sup></button>
+            <button class="keyExponent" data-action="xy"><span>x<sup>y</sup></button>
+            <button class="keyExponent" data-action="ex"><span>e<sup>x</sup></button>
     
             <button><span>7</span></button>
             <button><span>8</span></button>
             <button><span>9</span></button>
 
-            <button class="keyExpression" data-action="t"><span>test</span></button>
+            <button class="keyExponent" data-action="10x"><span>10<sup>x</sup></button>
             <button class="keyExpression" data-action="t"><span>test</span></button>
             <button class="keyExpression" data-action="t"><span>test</span></button>
             <button class="keyExpression" data-action="t"><span>test</span></button>
@@ -77,20 +77,27 @@
         const display = document.querySelector('.calculatorDisplay')
        
         // TODO: Make a separate function for expressions like exponents, sin cos tan, log, etc
-        // Call it 'calculateExpression' --> calculateExpression(num, expression(?), num2 == optional) (in the case of exponents)
-        //rename 'calculate to calculateOperation' --> calculateOperation(num1, operation, num2)
 
-        //Evaluate the input expression
-        const calculate = (num1, operator, num2) => {
+        //Evaluate the input exponent
+        
+
+        // Calculate operations using the standard four operators
+        const calculateOperation = (num1, operator, num2) => {
             const firstNum = parseFloat(num1)
             const secondNum = parseFloat(num2)
-            const result = performCalc(num1, operator, num2)
+            const result = performCalc(firstNum, operator, secondNum)
 
             // Check if the number is very large; If it is, return the number formatted in scientific notation
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
+
+        const calculateExponent = (num1, expression, num2) => {
+            const firstNum = parseFloat(num1)
+            const secondNum = parseFloat(num2)
+            const result = performExp(firstNum, expression, secondNum)
+            return isLargeNumber(result) ? result.toExponential(2) : result;
+        }
             
-        //
         const performCalc = (num1, operator, num2) => {
             switch (operator) {
             case 'add':
@@ -103,6 +110,17 @@
                 return num1 / num2;
             default:
                 return NaN;
+            }
+        }
+
+        performExp = (num1, expression, num2) => {
+            switch(expression) {
+                case 'x2':
+                    return Math.pow(num1, 2);
+                case 'x3':
+                    return Math.pow(num1, 3);
+                default: 
+                    return NaN;
             }
         }
 
@@ -125,6 +143,14 @@
                 action === 'multiply' ||
                 action === 'divide'
             ) return 'operator'
+
+            if (
+                action === 'x2' ||
+                action === 'x3' ||
+                action === 'xy' ||
+                action === 'ex' ||
+                action === '10x'
+            ) return 'exponent'
             // for any other key, return the action
             return action
         }
@@ -145,7 +171,7 @@
             } = state
             console.log(keyType)
             console.log(keyContent)
-            console.log(firstValue, operator, modValue)
+            
             if (keyType === 'number') {
                 if (displayedNum === '0' ||
                 previousKeyType === 'operator' ||
@@ -160,7 +186,9 @@
                     }                   
                     return keyContent
                 } else {
-                    return displayedNum + keyContent
+                    return keyContent === 'e' || keyContent === 'π'
+                    ?  displayedNum
+                    : displayedNum + keyContent
                 }
             }
 
@@ -175,8 +203,16 @@
                 operator &&
                 previousKeyType !== 'operator' &&
                 previousKeyType !== 'calculate'
-                ? calculate(firstValue, operator, displayedNum)
+                ? calculateOperation(firstValue, operator, displayedNum)
                 : displayedNum
+            }
+
+            if (keyType === 'exponent') {
+                state.operator = key.dataset.action
+                if (state.operator === 'xy') {
+                    return calculateExponent(firstValue, state.operator, )
+                }
+                return calculateExponent(displayedNum, state.operator)
             }
 
             if (keyType === 'clear') return 0
@@ -184,8 +220,8 @@
             if (keyType === 'calculate') {
                 return firstValue
                 ? previousKeyType === 'calculate'
-                    ? calculate(displayedNum, operator, modValue)
-                    : calculate(firstValue, operator, displayedNum)
+                    ? calculateOperation(displayedNum, operator, modValue)
+                    : calculateOperation(firstValue, operator, displayedNum)
                 : displayedNum
             }
         }
@@ -213,6 +249,15 @@
                 : displayedNum
             }
 
+            if (keyType === 'exponent') {
+                calculator.dataset.operator = key.dataset.action
+                calculator.dataset.firstValue = firstValue &&
+                operator &&
+                previousKeyType !== 'operator'
+                ? calculatedValue
+                : displayedNum
+            }
+
             if (keyType === 'calculate') {
                 calculator.dataset.modValue = firstValue && previousKeyType === 'calculate'
                 ? modValue
@@ -232,6 +277,7 @@
             Array.from(key.parentNode.children).forEach(k => k.classList.remove('is-depressed'))
 
             if (keyType === 'operator') key.classList.add('is-depressed')
+
             if (keyType === 'clear' && key.textContent !== 'AC') {
                 const clearButton = calculator.querySelector('[data-action=clear]')
                 clearButton.getElementsByTagName("span")[0].textContent = 'AC'
@@ -250,7 +296,6 @@
             const resultString = createResultString(key, displayedNumber, calculator.dataset)
 
             display.textContent = resultString
-            console.log(resultString)
             updateCalculatorState(key, calculator, resultString, displayedNumber)
             updateVisualState(key,calculator)
 

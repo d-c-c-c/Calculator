@@ -144,7 +144,7 @@ body {
     background-color: #eee;
   }
 
-  .keyExpression, .specialNums {
+  .keyExpression, .keyExponent, .specialNums {
     background-color: #c2c2c2;
   }
   
@@ -155,7 +155,7 @@ body {
   }
 
   /* Hover styles */
-  .keyOperator:hover, .specialNums:hover {
+  .keyOperator:hover,.keyExponent:hover, .specialNums:hover {
     background-color: #c5c5c5;
   }
 
