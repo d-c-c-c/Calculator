@@ -206,16 +206,32 @@
             }
 
             if (keyType === 'operator') {
-                return firstValue &&
+                //state.operator = ''
+                console.log('current key type:', keyType)
+                console.log("previous key type:",previousKeyType)
+                console.log('state operator', operator)
+                console.log('first value:', firstValue)
+                console.log(firstValue, operator, displayedNum)
+                if (firstValue &&
                 operator &&
                 previousKeyType !== 'operator' &&
-                previousKeyType !== 'calculate'
-                ? calculateOperation(firstValue, operator, displayedNum)
-                : displayedNum
+                previousKeyType !== 'calculate' &&
+                previousKeyType !== 'exponent') {
+                    if (state.operator !== 'xy') {
+                        return calculateOperation(firstValue, operator, displayedNum)
+                    } else {
+                        return calculateExponent(firstValue, state.operator, displayedNum)
+                    }
+                } else {
+                    return displayedNum
+                }
             }
-
+            
+            //TODO: Get exponents to work when chaining operators together
+            //EX: 2^3 + 1 = 9
             if (keyType === 'exponent') {
                 state.operator = key.dataset.action
+                console.log(operator)
                 if (state.operator === 'xy') {
                     console.log('first value:',firstValue)
                     if (firstValue) {
@@ -233,15 +249,11 @@
 
             if (keyType === 'calculate') {
                 //console.log(state.operator)
-                console.log('current key type:', keyType)
-                console.log("previous key type:",previousKeyType)
-                console.log('state operator', operator)
-                console.log('first value:', firstValue)
+                
                 //console.log(firstValue,state.operator,displayedNum)
                 if (firstValue) {
                     if (previousKeyType === 'calculate') {
                         if (state.operator === 'xy') {
-                            
                             console.log(displayedNum,state.operator,modValue)
                             return calculateExponent(displayedNum, state.operator, modValue)
                         } else {
@@ -285,19 +297,21 @@
                 calculator.dataset.firstValue = firstValue &&
                 operator &&
                 previousKeyType !== 'operator' &&
-                previousKeyType !== 'calculate'
+                previousKeyType !== 'calculate' 
                 ? calculatedValue
                 : displayedNum
             }
 
-            // if (keyType === 'exponent') {
-            //     calculator.dataset.operator = key.dataset.action
-            //     calculator.dataset.firstValue = firstValue &&
-            //     operator &&
-            //     previousKeyType !== 'operator'
-            //     ? calculatedValue
-            //     : displayedNum
-            // }
+            if (keyType === 'exponent') {
+                console.log('in exp')
+                calculator.dataset.operator = key.dataset.action
+                console.log(calculator.dataset.operator)
+                calculator.dataset.firstValue = firstValue &&
+                operator &&
+                previousKeyType !== 'operator'
+                ? calculatedValue
+                : displayedNum
+            }
 
             if (keyType === 'calculate' || keyType === 'exponent') {
                 calculator.dataset.modValue = firstValue && (previousKeyType === 'calculate' || previousKeyType === 'exponent')
@@ -319,6 +333,9 @@
 
             if (keyType === 'operator') key.classList.add('is-depressed')
 
+            if (keyType === 'exponent' && calculator.dataset.operator === 'xy') {
+                key.classList.add('is-depressed')
+            }
             if (keyType === 'clear' && key.textContent !== 'AC') {
                 const clearButton = calculator.querySelector('[data-action=clear]')
                 clearButton.getElementsByTagName("span")[0].textContent = 'AC'
