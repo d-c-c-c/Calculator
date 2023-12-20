@@ -175,8 +175,8 @@
                 modValue,
                 previousKeyType
             } = state
-            console.log(keyType)
-            console.log(keyContent)
+            // console.log(keyType)
+            // console.log(keyContent)
             
             if (keyType === 'number') {
                 if (displayedNum === '0' ||
@@ -219,6 +219,7 @@
                 if (state.operator === 'xy') {
                     console.log('first value:',firstValue)
                     if (firstValue) {
+                        console.log(firstValue,state.operator,displayedNum)
                         return calculateExponent(firstValue, state.operator, displayedNum)
                     } else {
                         return displayedNum
@@ -231,11 +232,38 @@
             if (keyType === 'clear') return 0
 
             if (keyType === 'calculate') {
-                return firstValue
-                ? previousKeyType === 'calculate'
-                    ? calculateOperation(displayedNum, operator, modValue)
-                    : calculateOperation(firstValue, operator, displayedNum)
-                : displayedNum
+                //console.log(state.operator)
+                console.log('current key type:', keyType)
+                console.log("previous key type:",previousKeyType)
+                console.log('state operator', operator)
+                console.log('first value:', firstValue)
+                //console.log(firstValue,state.operator,displayedNum)
+                if (firstValue) {
+                    if (previousKeyType === 'calculate') {
+                        if (state.operator === 'xy') {
+                            
+                            console.log(displayedNum,state.operator,modValue)
+                            return calculateExponent(displayedNum, state.operator, modValue)
+                        } else {
+                            return calculateOperation(displayedNum, operator, modValue)
+                        }
+                    } else {
+                        if (state.operator === 'xy') {
+                            console.log(firstValue,state.operator,displayedNum)
+                            return calculateExponent(firstValue, state.operator, displayedNum)
+                        } else {
+                            return calculateOperation(firstValue, operator, displayedNum)
+                        }
+                    }
+                } else {
+                    console.log('w')
+                    return displayedNum
+                }
+                // return firstValue
+                // ? previousKeyType === 'calculate'
+                //     ? calculateOperation(displayedNum, operator, modValue)
+                //     : calculateOperation(firstValue, operator, displayedNum)
+                // : displayedNum
             }
         }
     
@@ -252,7 +280,7 @@
             calculator.dataset.previousKeyType = keyType
             
 
-            if (keyType === 'operator') {
+            if (keyType === 'operator' || keyType === 'exponent') {
                 calculator.dataset.operator = key.dataset.action
                 calculator.dataset.firstValue = firstValue &&
                 operator &&
@@ -262,17 +290,17 @@
                 : displayedNum
             }
 
-            if (keyType === 'exponent') {
-                calculator.dataset.operator = key.dataset.action
-                calculator.dataset.firstValue = firstValue &&
-                operator &&
-                previousKeyType !== 'operator'
-                ? calculatedValue
-                : displayedNum
-            }
+            // if (keyType === 'exponent') {
+            //     calculator.dataset.operator = key.dataset.action
+            //     calculator.dataset.firstValue = firstValue &&
+            //     operator &&
+            //     previousKeyType !== 'operator'
+            //     ? calculatedValue
+            //     : displayedNum
+            // }
 
-            if (keyType === 'calculate') {
-                calculator.dataset.modValue = firstValue && previousKeyType === 'calculate'
+            if (keyType === 'calculate' || keyType === 'exponent') {
+                calculator.dataset.modValue = firstValue && (previousKeyType === 'calculate' || previousKeyType === 'exponent')
                 ? modValue
                 : displayedNum
             }
