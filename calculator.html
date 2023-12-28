@@ -27,7 +27,7 @@
 
             <button class="keyExponent" data-action="x2"><span>x<sup>2</sup></span></button>
             <button class="keyExponent" data-action="x3"><span>x<sup>3</sup></button>
-            <button class="keyOperator" data-action="xy"><span>x<sup>y</sup></button>
+            <button class="keyOperator" id = 'xyButton' data-action="xy"><span>x<sup>y</sup></button>
             <button class="keyExponent" data-action="ex"><span>e<sup>x</sup></button>
     
             <button><span>7</span></button>
@@ -108,7 +108,7 @@
                 return num1 * num2;
             case 'divide': 
                 return num1 / num2;
-            case 'xy': 
+            case 'xy':                          //Functions the same as an operator, so it is treated as such
                 return Math.pow(num1, num2);
             default:
                 return NaN;
@@ -122,9 +122,9 @@
                 case 'x3':
                     return Math.pow(num1, 3);
                 case 'ex': 
-                    return Math.pow(Math.E, num1);
+                    return Math.pow(Math.E, num2);
                 case '10x': 
-                    return Math.pow(10, num1);
+                    return Math.pow(10, num2);
                 default: 
                     return NaN;
             }
@@ -238,29 +238,35 @@
                         return displayedNum
                     }
                 } else {
-                    return calculateExponent(displayedNum, state.operator)
+                    return calculateExponent(displayedNum, state.operator, modValue)
                 } 
             }
 
             if (keyType === 'clear') return 0
 
             if (keyType === 'calculate') {
+                console.log(previousKeyType)
                 if (firstValue) {
                     if (previousKeyType === 'calculate') {
-                        if (state.operator === 'xy') {
-                            return calculateExponent(displayedNum, state.operator, modValue)
+                        if (operator === 'x2' || 
+                            operator === 'x3' ||
+                            operator === 'ex' ||
+                            operator === '10x'
+                        ) {
+                            console.log(displayedNum,state.operator,displayedNum)
+                            return calculateExponent(displayedNum, operator, modValue)
                         } else {
+                            
                             return calculateOperation(displayedNum, operator, modValue)
                         }
+                        
+                    } else if (previousKeyType === 'exponent') {
+                        console.log(displayedNum,state.operator,displayedNum)
+                        return calculateExponent(displayedNum, operator, modValue)
                     } else {
-                        if (state.operator === 'xy') {
-                            return calculateExponent(firstValue, state.operator, displayedNum)
-                        } else {
-                            return calculateOperation(firstValue, operator, displayedNum)
-                        }
+                        return calculateOperation(firstValue, operator, displayedNum)
                     }
                 } else {
-                    console.log('w')
                     return displayedNum
                 }
             }
