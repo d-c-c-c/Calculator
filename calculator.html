@@ -91,10 +91,9 @@
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
 
-        const calculateExponent = (num1, expression, num2) => {
+        const calculateExponent = (num1, expression) => {
             const firstNum = parseFloat(num1)
-            const secondNum = parseFloat(num2)
-            const result = performExp(firstNum, expression, secondNum)
+            const result = performExp(firstNum, expression)
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
             
@@ -115,16 +114,16 @@
             }
         }
 
-        performExp = (num1, expression, num2) => {
+        performExp = (num1, expression) => {
             switch(expression) {
                 case 'x2':
                     return Math.pow(num1, 2);
                 case 'x3':
                     return Math.pow(num1, 3);
                 case 'ex': 
-                    return Math.pow(Math.E, num2);
+                    return Math.pow(Math.E, num1);
                 case '10x': 
-                    return Math.pow(10, num2);
+                    return Math.pow(10, num1);
                 default: 
                     return NaN;
             }
@@ -228,18 +227,13 @@
             // Check for bugs when clicking x2 -> calculate, seems to produce NaN
             if (keyType === 'exponent') {
                 state.operator = key.dataset.action
-                console.log(operator)
-                if (state.operator === 'xy') {
-                    console.log('first value:',firstValue)
-                    if (firstValue) {
-                        console.log(firstValue,state.operator,displayedNum)
-                        return calculateExponent(firstValue, state.operator, displayedNum)
-                    } else {
-                        return displayedNum
-                    }
+                if (firstValue) {
+                    return calculateExponent(displayedNum, state.operator)
                 } else {
-                    return calculateExponent(displayedNum, state.operator, modValue)
-                } 
+                    console.log('test')
+                    return calculateExponent(displayedNum, state.operator)
+                }
+                
             }
 
             if (keyType === 'clear') return 0
@@ -253,16 +247,14 @@
                             operator === 'ex' ||
                             operator === '10x'
                         ) {
-                            console.log(displayedNum,state.operator,displayedNum)
-                            return calculateExponent(displayedNum, operator, modValue)
+                            return calculateExponent(displayedNum, operator)
                         } else {
                             
                             return calculateOperation(displayedNum, operator, modValue)
                         }
                         
                     } else if (previousKeyType === 'exponent') {
-                        console.log(displayedNum,state.operator,displayedNum)
-                        return calculateExponent(displayedNum, operator, modValue)
+                        return calculateExponent(displayedNum, operator)
                     } else {
                         return calculateOperation(firstValue, operator, displayedNum)
                     }
