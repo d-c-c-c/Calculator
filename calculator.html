@@ -35,9 +35,9 @@
             <button><span>9</span></button>
 
             <button class="keyExponent" data-action="10x"><span>10<sup>x</sup></button>
-            <button class="keyExpression" data-action="t"><span>sin()</span></button>
-            <button class="keyExpression" data-action="t"><span>cos()</span></button>
-            <button class="keyExpression" data-action="t"><span>tan()</span></button>
+            <button class="keyTrig" data-action="sin"><span>sin()</span></button>
+            <button class="keyTrig" data-action="cos"><span>cos()</span></button>
+            <button class="keyTrig" data-action="tan"><span>tan()</span></button>
 
             <button><span>4</span></button>
             <button><span>5</span></button>
@@ -94,6 +94,18 @@
         const calculateExponent = (num1, expression) => {
             const firstNum = parseFloat(num1)
             const result = performExp(firstNum, expression)
+            return isLargeNumber(result) ? result.toExponential(2) : result;
+        }
+
+        const calculateTrig = (num, func) => {
+            let result = 0
+            if (func === 'sin') {
+                result = Math.sin(num)
+            } else if (func === 'cos') {
+                result = Math.cos(num)
+            } else {
+                result = Math.tan(num)
+            }
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
             
@@ -157,6 +169,11 @@
                 action === 'ex' ||
                 action === '10x'
             ) return 'exponent'
+
+            if (action === 'sin' ||
+                action === 'cos' ||
+                action === 'tan' 
+            ) return 'trig'
             // for any other key, return the action
             return action
         }
@@ -199,6 +216,8 @@
                 }
             }
 
+            
+
             if (keyType === 'decimal') {
                 if (!displayedNum.includes('.')) return displayedNum + '.'
                 if (previousKeyType === 'operator' || previousKeyType === 'calculate') return '0.'
@@ -225,6 +244,7 @@
             
             //TODO: Get exponents to work when chaining operators together
             // Check for bugs when clicking x2 -> calculate, seems to produce NaN
+            //** Seems to be solved, monitor for now
             if (keyType === 'exponent') {
                 state.operator = key.dataset.action
                 if (firstValue) {
@@ -235,6 +255,15 @@
                 }
                 
             }
+
+            //Implement logic to work with calculate (Might not be necessary)
+            if (keyType === 'trig') {
+                state.operator = key.dataset.action
+                console.log('in trig')
+                console.log(state.operator)
+                return calculateTrig(displayedNum, state.operator)
+            }
+
 
             if (keyType === 'clear') return 0
 
