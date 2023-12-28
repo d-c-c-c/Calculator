@@ -144,7 +144,7 @@ body {
     background-color: #eee;
   }
 
-  .keyExpression, .keyExponent, .specialNums {
+  .keyExpression, #xyButton, .keyExponent, .specialNums {
     background-color: #c2c2c2;
   }
   

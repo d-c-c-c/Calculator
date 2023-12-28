@@ -27,7 +27,7 @@
 
             <button class="keyExponent" data-action="x2"><span>x<sup>2</sup></span></button>
             <button class="keyExponent" data-action="x3"><span>x<sup>3</sup></button>
-            <button class="keyExponent" data-action="xy"><span>x<sup>y</sup></button>
+            <button class="keyOperator" id = 'xyButton' data-action="xy"><span>x<sup>y</sup></button>
             <button class="keyExponent" data-action="ex"><span>e<sup>x</sup></button>
     
             <button><span>7</span></button>
@@ -35,9 +35,9 @@
             <button><span>9</span></button>
 
             <button class="keyExponent" data-action="10x"><span>10<sup>x</sup></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
+            <button class="keyExpression" data-action="t"><span>sin()</span></button>
+            <button class="keyExpression" data-action="t"><span>cos()</span></button>
+            <button class="keyExpression" data-action="t"><span>tan()</span></button>
 
             <button><span>4</span></button>
             <button><span>5</span></button>
@@ -91,10 +91,9 @@
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
 
-        const calculateExponent = (num1, expression, num2) => {
+        const calculateExponent = (num1, expression) => {
             const firstNum = parseFloat(num1)
-            const secondNum = parseFloat(num2)
-            const result = performExp(firstNum, expression, secondNum)
+            const result = performExp(firstNum, expression)
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
             
@@ -108,19 +107,19 @@
                 return num1 * num2;
             case 'divide': 
                 return num1 / num2;
+            case 'xy':                          //Functions the same as an operator, so it is treated as such
+                return Math.pow(num1, num2);
             default:
                 return NaN;
             }
         }
 
-        performExp = (num1, expression, num2) => {
+        performExp = (num1, expression) => {
             switch(expression) {
                 case 'x2':
                     return Math.pow(num1, 2);
                 case 'x3':
                     return Math.pow(num1, 3);
-                case 'xy': 
-                    return Math.pow(num1, num2);
                 case 'ex': 
                     return Math.pow(Math.E, num1);
                 case '10x': 
@@ -147,13 +146,14 @@
                 action === 'add' ||
                 action === 'subtract' ||
                 action === 'multiply' ||
-                action === 'divide'
+                action === 'divide' ||
+                action === 'xy'
             ) return 'operator'
 
             if (
                 action === 'x2' ||
                 action === 'x3' ||
-                action === 'xy' ||
+                //action === 'xy' ||
                 action === 'ex' ||
                 action === '10x'
             ) return 'exponent'
@@ -217,65 +217,50 @@
                 previousKeyType !== 'operator' &&
                 previousKeyType !== 'calculate' &&
                 previousKeyType !== 'exponent') {
-                    if (state.operator !== 'xy') {
-                        return calculateOperation(firstValue, operator, displayedNum)
-                    } else {
-                        return calculateExponent(firstValue, state.operator, displayedNum)
-                    }
+                    return calculateOperation(firstValue, operator, displayedNum)
                 } else {
                     return displayedNum
                 }
             }
             
             //TODO: Get exponents to work when chaining operators together
-            //EX: 2^3 + 1 = 9
+            // Check for bugs when clicking x2 -> calculate, seems to produce NaN
             if (keyType === 'exponent') {
                 state.operator = key.dataset.action
-                console.log(operator)
-                if (state.operator === 'xy') {
-                    console.log('first value:',firstValue)
-                    if (firstValue) {
-                        console.log(firstValue,state.operator,displayedNum)
-                        return calculateExponent(firstValue, state.operator, displayedNum)
-                    } else {
-                        return displayedNum
-                    }
-                } else {
+                if (firstValue) {
                     return calculateExponent(displayedNum, state.operator)
-                } 
+                } else {
+                    console.log('test')
+                    return calculateExponent(displayedNum, state.operator)
+                }
+                
             }
 
             if (keyType === 'clear') return 0
 
             if (keyType === 'calculate') {
-                //console.log(state.operator)
-                
-                //console.log(firstValue,state.operator,displayedNum)
+                console.log(previousKeyType)
                 if (firstValue) {
                     if (previousKeyType === 'calculate') {
-                        if (state.operator === 'xy') {
-                            console.log(displayedNum,state.operator,modValue)
-                            return calculateExponent(displayedNum, state.operator, modValue)
+                        if (operator === 'x2' || 
+                            operator === 'x3' ||
+                            operator === 'ex' ||
+                            operator === '10x'
+                        ) {
+                            return calculateExponent(displayedNum, operator)
                         } else {
+                            
                             return calculateOperation(displayedNum, operator, modValue)
                         }
+                        
+                    } else if (previousKeyType === 'exponent') {
+                        return calculateExponent(displayedNum, operator)
                     } else {
-                        if (state.operator === 'xy') {
-                            console.log(firstValue,state.operator,displayedNum)
-                            return calculateExponent(firstValue, state.operator, displayedNum)
-                        } else {
-                            return calculateOperation(firstValue, operator, displayedNum)
-                        }
+                        return calculateOperation(firstValue, operator, displayedNum)
                     }
                 } else {
-                    console.log('w')
                     return displayedNum
                 }
-                // return firstValue
-                // ? previousKeyType === 'calculate'
-                //     ? calculateOperation(displayedNum, operator, modValue)
-                //     : calculateOperation(firstValue, operator, displayedNum)
-                // : displayedNum
             }
         }
     
@@ -303,9 +288,7 @@
             }
 
             if (keyType === 'exponent') {
-                console.log('in exp')
                 calculator.dataset.operator = key.dataset.action
-                console.log(calculator.dataset.operator)
                 calculator.dataset.firstValue = firstValue &&
                 operator &&
                 previousKeyType !== 'operator'
