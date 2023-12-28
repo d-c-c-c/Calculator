@@ -144,7 +144,7 @@ body {
     background-color: #eee;
   }
 
-  .keyExpression, #xyButton, .keyExponent, .keyTrig, .specialNums {
+  .keyExpression, #xyButton, .keyExponent, .keyTrig, .keyLog, .specialNums {
     background-color: #c2c2c2;
   }
   
@@ -155,11 +155,14 @@ body {
   }
 
   /* Hover styles */
-  .keyOperator:hover,.keyExponent:hover, .keyTrig:hover, .specialNums:hover {
+  .keyNum:hover, #decimalButton:hover, #clearButton:hover {
+    background-color: #c5c5c5;
+  }
+  .keyOperator:hover {
     background-color: #c5c5c5;
   }
 
-  .keyExpression:hover {
+  .keyExpression:hover, .keyTrig:hover, .keyLog:hover, .keyExponent:hover, .specialNums:hover {
     background-color: rgb(138, 138, 138);
   }
 
