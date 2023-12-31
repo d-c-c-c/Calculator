@@ -15,20 +15,53 @@
 
         <!-- This is where all of the keys will go -->
         <div class="calculatorKeys">
+            <button class="keyExpression" data-action="factorial"><span>x!</span></button> <!--Factorial Button-->
+            <button class="keyOperator" id = "EEButton" data-action="EE"><span>EE</span></button> <!--EE: Button for x * 10^y-->
+            <button class="specialNums"><span>e</span></button>
+            <button class="specialNums"><span>&pi;</span></button>
+
             <button class="keyOperator" data-action="add"><span>+</span></button>
             <button class="keyOperator" data-action="subtract"><span>-</span></button>
             <button class="keyOperator" data-action="multiply"><span>&times;</span></button>
             <button class="keyOperator" data-action="divide"><span>&divide;</span></button>
-            <button><span>7</span></button>
-            <button><span>8</span></button>
-            <button><span>9</span></button>
-            <button><span>4</span></button>
-            <button><span>5</span></button>
-            <button><span>6</span></button>
-            <button><span>1</span></button>
-            <button><span>2</span></button>
-            <button><span>3</span></button>
+
+            <button class="keyExponent" data-action="x2"><span>x<sup>2</sup></span></button>
+            <button class="keyExponent" data-action="x3"><span>x<sup>3</sup></button>
+            <button class="keyOperator" id = 'xyButton' data-action="xy"><span>x<sup>y</sup></button>
+            <button class="keyExponent" data-action="ex"><span>e<sup>x</sup></button>
+    
+            <button class = "keyNum"><span>7</span></button>
+            <button class = "keyNum"><span>8</span></button>
+            <button class = "keyNum"><span>9</span></button>
+
+            <button class="keyExponent" data-action="10x"><span>10<sup>x</sup></button>
+            <button class="keyTrig" data-action="sin"><span>sin()</span></button>
+            <button class="keyTrig" data-action="cos"><span>cos()</span></button>
+            <button class="keyTrig" data-action="tan"><span>tan()</span></button>
+
+            <button class = "keyNum"><span>4</span></button>
+            <button class = "keyNum"><span>5</span></button>
+            <button class = "keyNum"><span>6</span></button>
+
+            <button class="keyExpression" data-action="sqrt2"><span>sqrt(2)</span></button>
+            <button class="keyExpression" data-action="sqrt3"><span>sqrt(3)</span></button>
+            <button class="keyOperator" id = 'ysqrtxButton' data-action="ysqrtx"><span>y sqrt(x)</span></button>
+            <button class="keyExpression" data-action="ln"><span>ln</span></button> <!--Natural log-->
+
+            <button class = "keyNum"><span>1</span></button>
+            <button class = "keyNum"><span>2</span></button>
+            <button class = "keyNum"><span>3</span></button>
+            
+
+            <button class="keyLog" data-action="log2"><span>Log<sub>2</sub>x</span></button>
+            <button class="keyLog" data-action="log3"><span>Log<sub>3</sub>x</button>
+            <button class="keyOperator" id = 'logxyButton' data-action="ylogx"><span>Log<sub>y</sub>x</button>
+            <button class="keyLog" data-action="log10"><span>Log<sub>10</sub>x</button>
+            
             <button><span>0</span></button>
+            
+
+            
             <button id= "decimalButton" data-action="decimal"><span>.</span></button>
             <button id= "clearButton" data-action="clear"><span>AC</span></button>
             <button class="keyEqual" data-action="calculate"><span>=</span></button>
@@ -45,11 +78,12 @@
         const display = document.querySelector('.calculatorDisplay')
        
         // TODO: Make a separate function for expressions like exponents, sin cos tan, log, etc
-        // Call it 'calculateExpression' --> calculateExpression(num, expression(?), num2 == optional) (in the case of exponents)
-        //rename 'calculate to calculateOperation' --> calculateOperation(num1, operation, num2)
 
-        //Evaluate the input expression
-        const calculate = (num1, operator, num2) => {
+        //Evaluate the input exponent
+        
+
+        // Calculate operations using the standard four operators
+        const calculateOperation = (num1, operator, num2) => {
             const firstNum = parseFloat(num1)
             const secondNum = parseFloat(num2)
             const result = performCalc(firstNum, operator, secondNum)
@@ -57,20 +91,74 @@
             // Check if the number is very large; If it is, return the number formatted in scientific notation
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
+
+        const calculateExpression = (num1, expression) => {
+            const firstNum = parseFloat(num1)
+            const result = performExp(firstNum, expression)
+            return isLargeNumber(result) ? result.toExponential(2) : result;
+        }
+
+        const calculateTrig = (num, func) => {
+            let result = 0
+            if (func === 'sin') {
+                result = Math.sin(num)
+            } else if (func === 'cos') {
+                result = Math.cos(num)
+            } else {
+                result = Math.tan(num)
+            }
+            return result;
+        }
             
-        //
         const performCalc = (num1, operator, num2) => {
             switch (operator) {
             case 'add':
-                return num1 + num2
+                return parseFloat(num1) + parseFloat(num2);
             case 'subtract':
-                return num1 - num2
+                return num1 - num2;
             case 'multiply':
-                return num1 * num2
+                return num1 * num2;
             case 'divide': 
-                return num1 / num2
+                return num1 / num2;
+            case 'xy':                          //Functions the same as an operator, so it is treated as such
+                return Math.pow(num1, num2);
+            case 'ylogx': 
+                return logYofX(num1, num2);
+            case 'ysqrtx': 
+                return findRoot(num1, num2);
+            case 'EE':
+                return calcEE(num1, num2);
             default:
-                return NaN
+                return NaN;
+            }
+        }
+
+        performExp = (num1, expression) => {
+            switch(expression) {
+                case 'x2':
+                    return Math.pow(num1, 2);
+                case 'x3':
+                    return Math.pow(num1, 3);
+                case 'ex': 
+                    return Math.pow(Math.E, num1);
+                case '10x': 
+                    return Math.pow(10, num1);
+                case 'log2': 
+                    return logYofX(num1, 2);
+                case 'log3': 
+                    return logYofX(num1, 3);
+                case 'log10': 
+                    return logYofX(num1, 10);
+                case 'sqrt2': 
+                    return findRoot(num1, 2);
+                case 'sqrt3': 
+                    return findRoot(num1, 3);
+                case 'ln': 
+                    return Math.log(num1)
+                case 'factorial':
+                    return factorial(num1)
+                default: 
+                    return NaN;
             }
         }
 
@@ -78,6 +166,39 @@
         const isLargeNumber = (num) => {
             const threshold = 1e12 //arbitrary threshold for a large number
             return Math.abs(num) >= threshold
+        }
+
+        // Calculates the log base Y of X
+        const logYofX = (x, y) => {
+            console.log(x,y)
+            return Math.log(x) / Math.log(y);
+        } 
+
+        //Calculates root Y of X
+        const findRoot = (x, y) => {
+            return Math.pow(x, 1 / y); // y (root) x = x ^ 1/y
+        }
+
+        //Finds the factorial of the input number
+        const factorial = (num) => {
+            //Factorial cannot be negative
+            if (num < 0) {
+                return 'Error'
+            } else if (num === 0) {
+                return 1 // 0! = 1
+            } else {
+                result = 1
+                for (i = 1; i <= num; i++) {
+                    result *= i;
+                }
+                return result
+            }
+
+        }
+
+        //Calculate X * 10^y
+        const calcEE = (x, y) => {
+            return x * Math.pow(10,y);
         }
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
@@ -91,8 +212,43 @@
                 action === 'add' ||
                 action === 'subtract' ||
                 action === 'multiply' ||
-                action === 'divide'
+                action === 'divide' ||
+                action === 'xy' ||
+                action === 'ylogx' ||
+                action === 'ysqrtx' ||
+                action === 'EE'
             ) return 'operator'
+
+            if (
+                action === 'x2' ||
+                action === 'x3' ||
+                action === 'ex' ||
+                action === '10x'
+            ) return 'exponent'
+
+            if( 
+                action === 'log2' ||
+                action === 'log3' ||
+                action === 'log10'
+            ) return 'logarithm'
+
+            if (
+                action === 'sqrt2' ||
+                action === 'sqrt3'
+            ) return 'root'
+
+            if (
+                action === 'ln'
+            ) return 'natural log'
+
+            if(
+                action === 'factorial'
+            ) return 'factorial'
+
+            if (action === 'sin' ||
+                action === 'cos' ||
+                action === 'tan' 
+            ) return 'trig'
             // for any other key, return the action
             return action
         }
@@ -113,12 +269,28 @@
             } = state
 
             if (keyType === 'number') {
-                return displayedNum === '0' ||
+                if (displayedNum === '0' ||
                 previousKeyType === 'operator' ||
-                previousKeyType === 'calculate'
-                ? keyContent
-                : displayedNum + keyContent
+                previousKeyType === 'calculate' ||
+                previousKeyType === 'exponent' ||
+                previousKeyType === 'logarithm'
+                ){
+                    if (keyContent === 'e') {
+                        return Math.E.toString()
+                    }
+
+                    if (keyContent === 'π') {
+                        return Math.PI
+                    }                   
+                    return keyContent
+                } else {
+                    return keyContent === 'e' || keyContent === 'π'
+                    ?  displayedNum
+                    : displayedNum + keyContent
+                }
             }
+
+            
 
             if (keyType === 'decimal') {
                 if (!displayedNum.includes('.')) return displayedNum + '.'
@@ -127,22 +299,91 @@
             }
 
             if (keyType === 'operator') {
-                return firstValue &&
+                if (firstValue &&
                 operator &&
                 previousKeyType !== 'operator' &&
-                previousKeyType !== 'calculate'
-                ? calculate(firstValue, operator, displayedNum)
-                : displayedNum
+                previousKeyType !== 'calculate' &&
+                previousKeyType !== 'exponent') {
+                    return calculateOperation(firstValue, operator, displayedNum)
+                } else {
+                    return displayedNum
+                }
             }
+            
+            //TODO: Get exponents to work when chaining operators together
+            // Check for bugs when clicking x2 -> calculate, seems to produce NaN
+            //** Seems to be solved, monitor for now
+            if (keyType === 'exponent') {
+                state.operator = key.dataset.action
+                if (firstValue) {
+                    return calculateExpression(displayedNum, state.operator)
+                } else {
+                    console.log('test')
+                    return calculateExpression(displayedNum, state.operator)
+                }
+                
+            }
+
+            //Implement logic to work with calculate (Might not be necessary)
+            if (keyType === 'trig') {
+                state.operator = key.dataset.action
+                return calculateTrig(displayedNum, state.operator)
+            }
+
+            if (keyType === 'logarithm') {
+                state.operator = key.dataset.action
+                return calculateExpression(displayedNum, state.operator)
+            }
+
+            if (keyType === 'root') {
+                state.operator = key.dataset.action
+                return calculateExpression(displayedNum, state.operator)
+            }
+
+            if (keyType === 'natural log') {
+                state.operator = key.dataset.action
+                return calculateExpression(displayedNum, state.operator)
+            }
+
+            if (keyType === 'factorial') {
+                state.operator = key.dataset.action
+                console.log('in fact')
+                return calculateExpression(displayedNum, state.operator)
+            }
+
 
             if (keyType === 'clear') return 0
 
             if (keyType === 'calculate') {
-                return firstValue
-                ? previousKeyType === 'calculate'
-                    ? calculate(displayedNum, operator, modValue)
-                    : calculate(firstValue, operator, displayedNum)
-                : displayedNum
+                console.log(previousKeyType)
+                if (firstValue) {
+                    if (previousKeyType === 'calculate') {
+                        if (operator === 'x2' || 
+                            operator === 'x3' ||
+                            operator === 'ex' ||
+                            operator === '10x' ||
+                            operator === 'log2' ||
+                            operator === 'log3' ||
+                            operator === 'log10' ||
+                            operator === 'sqrt2' ||
+                            operator === 'sqrt3' 
+                        ) {
+                            return calculateExpression(displayedNum, operator)
+                        } else {
+                            return calculateOperation(displayedNum, operator, modValue)
+                        }
+                        
+                    } else if (
+                    previousKeyType === 'exponent' || 
+                    previousKeyType === 'logarithm' || 
+                    previousKeyType === 'root') {
+                        return calculateExpression(displayedNum, operator)
+                    } else {
+                        return calculateOperation(firstValue, operator, displayedNum)
+                    }
+                } else {
+                    return displayedNum
+                }
             }
         }
     
@@ -157,21 +398,37 @@
             } = calculator.dataset
 
             calculator.dataset.previousKeyType = keyType
-            console.log(keyType)
-            console.log(firstValue, operator, modValue)
+            
 
-            if (keyType === 'operator') {
+            if (
+                keyType === 'operator' || 
+                keyType === 'exponent' || 
+                keyType === 'logarithm' ||
+                keyType === 'root') {
                 calculator.dataset.operator = key.dataset.action
                 calculator.dataset.firstValue = firstValue &&
                 operator &&
                 previousKeyType !== 'operator' &&
-                previousKeyType !== 'calculate'
+                previousKeyType !== 'calculate' 
+                ? calculatedValue
+                : displayedNum
+            }
+
+            if (keyType === 'exponent') {
+                calculator.dataset.operator = key.dataset.action
+                calculator.dataset.firstValue = firstValue &&
+                operator &&
+                previousKeyType !== 'operator'
                 ? calculatedValue
                 : displayedNum
             }
 
             if (keyType === 'calculate') {
-                calculator.dataset.modValue = firstValue && previousKeyType === 'calculate'
+                calculator.dataset.modValue = firstValue && (
+                previousKeyType === 'calculate' || 
+                previousKeyType === 'exponent'  || 
+                previousKeyType === 'logarithm' ||
+                previousKeyType === 'root')
                 ? modValue
                 : displayedNum
             }
@@ -189,6 +446,15 @@
             Array.from(key.parentNode.children).forEach(k => k.classList.remove('is-depressed'))
 
             if (keyType === 'operator') key.classList.add('is-depressed')
+
+            if (keyType === 'exponent' && calculator.dataset.operator === 'xy') {
+                key.classList.add('is-depressed')
+            }
+
+            if (keyType === 'logarithm' && calculator.dataset.operator === 'ylogx') {
+                key.classList.add('is-depressed')
+            }
+            
             if (keyType === 'clear' && key.textContent !== 'AC') {
                 const clearButton = calculator.querySelector('[data-action=clear]')
                 clearButton.getElementsByTagName("span")[0].textContent = 'AC'
@@ -202,13 +468,11 @@
         keys.addEventListener('click', e => {
             if (e.target.matches('button')) {
 
-            console.log(e.target)
             const key = e.target
             const displayedNumber = display.textContent
             const resultString = createResultString(key, displayedNumber, calculator.dataset)
 
             display.textContent = resultString
-            console.log(resultString)
             updateCalculatorState(key, calculator, resultString, displayedNumber)
             updateVisualState(key,calculator)
 

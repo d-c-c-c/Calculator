@@ -87,7 +87,6 @@ body {
     margin-left: auto;
     margin-right: auto;
     margin-top: 2em;
-    max-width: 15em;
     overflow: hidden;
   }
   
@@ -105,7 +104,7 @@ body {
     background-color: #999;
     display: grid;
     grid-gap: 1px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(8, 1fr);
   }
   
   /* Controls the properties of each of the calculator keys */
@@ -144,6 +143,10 @@ body {
   .keyOperator {
     background-color: #eee;
   }
+
+  .keyExpression, #xyButton, #logxyButton, #ysqrtxButton, #EEButton, .keyExponent, .keyTrig, .keyLog, .specialNums {
+    background-color: #c2c2c2;
+  }
   
   .keyEqual {
     background-image: linear-gradient(to bottom, #fe886a, #ff7033);
@@ -152,14 +155,18 @@ body {
   }
 
   /* Hover styles */
+  .keyNum:hover, #decimalButton:hover, #clearButton:hover {
+    background-color: #c5c5c5;
+  }
   .keyOperator:hover {
     background-color: #c5c5c5;
   }
 
-  .calculatorKeys > *:hover {
-    background-color: #c5c5c5;
+  .keyExpression:hover, .keyTrig:hover, .keyLog:hover, #xyButton:hover, #logxyButton:hover, #ysqrtxButton:hover, #EEButton:hover,.keyExponent:hover, .specialNums:hover {
+    background-color: rgb(138, 138, 138);
   }
 
   .keyEqual:hover {
     background-image: linear-gradient(to bottom, #d36f55, #c95929);
   }
+  
