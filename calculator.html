@@ -107,7 +107,7 @@
             } else {
                 result = Math.tan(num)
             }
-            return isLargeNumber(result) ? result.toExponential(2) : result;
+            return result;
         }
             
         const performCalc = (num1, operator, num2) => {
@@ -172,7 +172,7 @@
 
         //Calculates root Y of X
         const findRoot = (x, y) => {
-            return Math.pow(x, 1 / y); // y (sqrt) x = x ^ 1/y
+            return Math.pow(x, 1 / y); // y (root) x = x ^ 1/y
         }
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
@@ -205,7 +205,6 @@
                 action === 'log10'
             ) return 'logarithm'
 
-            // add in sqrts
             if (
                 action === 'sqrt2' ||
                 action === 'sqrt3'
@@ -403,7 +402,7 @@
                 : displayedNum
             }
 
-            if (keyType === 'calculate' || keyType === 'exponent') {
+            if (keyType === 'calculate') {
                 calculator.dataset.modValue = firstValue && (
                 previousKeyType === 'calculate' || 
                 previousKeyType === 'exponent'  || 
