@@ -16,7 +16,7 @@
         <!-- This is where all of the keys will go -->
         <div class="calculatorKeys">
             <button class="keyExpression" data-action="factorial"><span>x!</span></button> <!--Factorial Button-->
-            <button class="keyExpression" data-action="t"><span>EE(todo)</span></button> <!--EE: Button for x * 10^y-->
+            <button class="keyOperator" id = "EEButton" data-action="EE"><span>EE</span></button> <!--EE: Button for x * 10^y-->
             <button class="specialNums"><span>e</span></button>
             <button class="specialNums"><span>&pi;</span></button>
 
@@ -126,6 +126,8 @@
                 return logYofX(num1, num2);
             case 'ysqrtx': 
                 return findRoot(num1, num2);
+            case 'EE':
+                return calcEE(num1, num2);
             default:
                 return NaN;
             }
@@ -193,6 +195,11 @@
             }
 
         }
+
+        //Calculate X * 10^y
+        const calcEE = (x, y) => {
+            return x * Math.pow(10,y);
+        }
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
             const { action } = key.dataset
@@ -208,7 +215,8 @@
                 action === 'divide' ||
                 action === 'xy' ||
                 action === 'ylogx' ||
-                action === 'ysqrtx'
+                action === 'ysqrtx' ||
+                action === 'EE'
             ) return 'operator'
 
             if (
