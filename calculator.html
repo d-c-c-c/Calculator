@@ -127,7 +127,7 @@
             case 'ysqrtx': 
                 return findRoot(num1, num2);
             case 'EE':
-                return calcEE(num1, num2);
+                return num1 * Math.pow(10, num2);
             default:
                 return NaN;
             }
@@ -194,11 +194,6 @@
                 return result
             }
 
-        }
-
-        //Calculate X * 10^y
-        const calcEE = (x, y) => {
-            return x * Math.pow(10,y);
         }
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
