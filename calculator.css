@@ -144,7 +144,7 @@ body {
     background-color: #eee;
   }
 
-  .keyExpression, #xyButton, .keyExponent, .keyTrig, .keyLog, .specialNums {
+  .keyExpression, #xyButton, #logxyButton, .keyExponent, .keyTrig, .keyLog, .specialNums {
     background-color: #c2c2c2;
   }
   

@@ -15,8 +15,8 @@
 
         <!-- This is where all of the keys will go -->
         <div class="calculatorKeys">
-            <button class="keyExpression" data-action="t"><span></span></button>
-            <button class="keyExpression" data-action="t"><span></span></button>
+            <button class="keyExpression" data-action="t"><span>x!</span></button> <!--Factorial Button-->
+            <button class="keyExpression" data-action="t"><span>EE</span></button> <!--EE: Button for x * 10^y-->
             <button class="specialNums"><span>e</span></button>
             <button class="specialNums"><span>&pi;</span></button>
 
@@ -43,20 +43,21 @@
             <button class = "keyNum"><span>5</span></button>
             <button class = "keyNum"><span>6</span></button>
 
-            <button class="keyLog" data-action="log2"><span>Log<sub>2</sub>x</span></button>
-            <button class="keyLog" data-action="log3"><span>Log<sub>3</sub>x</button>
-            <button class="keyLog" data-action="ylogx"><span>Log<sub>y</sub>x</button>
-            <button class="keyLog" data-action="log10"><span>Log<sub>10</sub>x</button>
+            <button class="keyExpression" data-action="t"><span>sqrt(2)</span></button>
+            <button class="keyExpression" data-action="t"><span>sqrt(3)</span></button>
+            <button class="keyExpression" data-action="t"><span>y sqrt(x)</span></button>
+            <button class="keyExpression" data-action="t"><span>ln</span></button> <!--Natural log-->
 
             <button class = "keyNum"><span>1</span></button>
             <button class = "keyNum"><span>2</span></button>
             <button class = "keyNum"><span>3</span></button>
             
 
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
-            <button class="keyExpression" data-action="t"><span>test</span></button>
+            <button class="keyLog" data-action="log2"><span>Log<sub>2</sub>x</span></button>
+            <button class="keyLog" data-action="log3"><span>Log<sub>3</sub>x</button>
+            <button class="keyOperator" id = 'logxyButton' data-action="ylogx"><span>Log<sub>y</sub>x</button>
+            <button class="keyLog" data-action="log10"><span>Log<sub>10</sub>x</button>
+            
             <button><span>0</span></button>
             
 
@@ -91,7 +92,7 @@
             return isLargeNumber(result) ? result.toExponential(2) : result;
         }
 
-        const calculateExponent = (num1, expression) => {
+        const calculateExpression = (num1, expression) => {
             const firstNum = parseFloat(num1)
             const result = performExp(firstNum, expression)
             return isLargeNumber(result) ? result.toExponential(2) : result;
@@ -121,6 +122,8 @@
                 return num1 / num2;
             case 'xy':                          //Functions the same as an operator, so it is treated as such
                 return Math.pow(num1, num2);
+            case 'ylogx': 
+                return logYofX(num1, num2);
             default:
                 return NaN;
             }
@@ -136,6 +139,12 @@
                     return Math.pow(Math.E, num1);
                 case '10x': 
                     return Math.pow(10, num1);
+                case 'log2': 
+                    return logYofX(num1, 2);
+                case 'log3': 
+                    return logYofX(num1, 3);
+                case 'log10': 
+                    return logYofX(num1, 10);
                 default: 
                     return NaN;
             }
@@ -146,6 +155,12 @@
             const threshold = 1e12 //arbitrary threshold for a large number
             return Math.abs(num) >= threshold
         }
+
+        // Calculates the log base Y of X
+        const logYofX = (x, y) => {
+            console.log(x,y)
+            return Math.log(x) / Math.log(y);
+        } 
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
             const { action } = key.dataset
@@ -159,7 +174,8 @@
                 action === 'subtract' ||
                 action === 'multiply' ||
                 action === 'divide' ||
-                action === 'xy'
+                action === 'xy' ||
+                action === 'ylogx'
             ) return 'operator'
 
             if (
@@ -169,6 +185,12 @@
                 action === 'ex' ||
                 action === '10x'
             ) return 'exponent'
+
+            if( 
+                action === 'log2' ||
+                action === 'log3' ||
+                action === 'log10'
+            ) return 'logarithm'
 
             if (action === 'sin' ||
                 action === 'cos' ||
@@ -199,7 +221,8 @@
                 if (displayedNum === '0' ||
                 previousKeyType === 'operator' ||
                 previousKeyType === 'calculate' ||
-                previousKeyType === 'exponent'
+                previousKeyType === 'exponent' ||
+                previousKeyType === 'logarithm'
                 ){
                     if (keyContent === 'e') {
                         return Math.E.toString()
@@ -248,10 +271,10 @@
             if (keyType === 'exponent') {
                 state.operator = key.dataset.action
                 if (firstValue) {
-                    return calculateExponent(displayedNum, state.operator)
+                    return calculateExpression(displayedNum, state.operator)
                 } else {
                     console.log('test')
-                    return calculateExponent(displayedNum, state.operator)
+                    return calculateExpression(displayedNum, state.operator)
                 }
                 
             }
@@ -264,6 +287,13 @@
                 return calculateTrig(displayedNum, state.operator)
             }
 
+            if (keyType === 'logarithm') {
+                state.operator = key.dataset.action
+                console.log('in log')
+                console.log(state.operator)
+                return calculateExpression(displayedNum, state.operator)
+            }
+
 
             if (keyType === 'clear') return 0
 
@@ -274,16 +304,17 @@
                         if (operator === 'x2' || 
                             operator === 'x3' ||
                             operator === 'ex' ||
-                            operator === '10x'
+                            operator === '10x' ||
+                            operator === 'log2'
                         ) {
-                            return calculateExponent(displayedNum, operator)
+                            return calculateExpression(displayedNum, operator)
                         } else {
                             
                             return calculateOperation(displayedNum, operator, modValue)
                         }
                         
-                    } else if (previousKeyType === 'exponent') {
-                        return calculateExponent(displayedNum, operator)
+                    } else if (previousKeyType === 'exponent' || previousKeyType === 'logarithm') {
+                        return calculateExpression(displayedNum, operator)
                     } else {
                         return calculateOperation(firstValue, operator, displayedNum)
                     }
@@ -306,7 +337,10 @@
             calculator.dataset.previousKeyType = keyType
             
 
-            if (keyType === 'operator' || keyType === 'exponent') {
+            if (
+                keyType === 'operator' || 
+                keyType === 'exponent' || 
+                keyType === 'logarithm') {
                 calculator.dataset.operator = key.dataset.action
                 calculator.dataset.firstValue = firstValue &&
                 operator &&
@@ -326,7 +360,10 @@
             }
 
             if (keyType === 'calculate' || keyType === 'exponent') {
-                calculator.dataset.modValue = firstValue && (previousKeyType === 'calculate' || previousKeyType === 'exponent')
+                calculator.dataset.modValue = firstValue && (
+                previousKeyType === 'calculate' || 
+                previousKeyType === 'exponent'  || 
+                previousKeyType === 'logarithm')
                 ? modValue
                 : displayedNum
             }
