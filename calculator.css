@@ -162,7 +162,7 @@ body {
     background-color: #c5c5c5;
   }
 
-  .keyExpression:hover, .keyTrig:hover, .keyLog:hover, .keyExponent:hover, .specialNums:hover {
+  .keyExpression:hover, .keyTrig:hover, .keyLog:hover, #xyButton:hover, #logxyButton:hover, .keyExponent:hover, .specialNums:hover {
     background-color: rgb(138, 138, 138);
   }
 
