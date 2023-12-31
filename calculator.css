@@ -144,7 +144,7 @@ body {
     background-color: #eee;
   }
 
-  .keyExpression, #xyButton, #logxyButton, .keyExponent, .keyTrig, .keyLog, .specialNums {
+  .keyExpression, #xyButton, #logxyButton, #ysqrtxButton, .keyExponent, .keyTrig, .keyLog, .specialNums {
     background-color: #c2c2c2;
   }
   
@@ -162,10 +162,11 @@ body {
     background-color: #c5c5c5;
   }
 
-  .keyExpression:hover, .keyTrig:hover, .keyLog:hover, #xyButton:hover, #logxyButton:hover, .keyExponent:hover, .specialNums:hover {
+  .keyExpression:hover, .keyTrig:hover, .keyLog:hover, #xyButton:hover, #logxyButton:hover, #ysqrtxButton:hover, .keyExponent:hover, .specialNums:hover {
     background-color: rgb(138, 138, 138);
   }
 
   .keyEqual:hover {
     background-image: linear-gradient(to bottom, #d36f55, #c95929);
   }
+  

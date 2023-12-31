@@ -43,10 +43,10 @@
             <button class = "keyNum"><span>5</span></button>
             <button class = "keyNum"><span>6</span></button>
 
-            <button class="keyExpression" data-action="t"><span>sqrt(2)</span></button>
-            <button class="keyExpression" data-action="t"><span>sqrt(3)</span></button>
-            <button class="keyExpression" data-action="t"><span>y sqrt(x)</span></button>
-            <button class="keyExpression" data-action="t"><span>ln</span></button> <!--Natural log-->
+            <button class="keyExpression" data-action="sqrt2"><span>sqrt(2)</span></button>
+            <button class="keyExpression" data-action="sqrt3"><span>sqrt(3)</span></button>
+            <button class="keyOperator" id = 'ysqrtxButton' data-action="ysqrtx"><span>y sqrt(x)</span></button>
+            <button class="keyExpression" data-action="ln"><span>ln</span></button> <!--Natural log-->
 
             <button class = "keyNum"><span>1</span></button>
             <button class = "keyNum"><span>2</span></button>
@@ -124,6 +124,8 @@
                 return Math.pow(num1, num2);
             case 'ylogx': 
                 return logYofX(num1, num2);
+            case 'ysqrtx': 
+                return findRoot(num1, num2);
             default:
                 return NaN;
             }
@@ -145,6 +147,12 @@
                     return logYofX(num1, 3);
                 case 'log10': 
                     return logYofX(num1, 10);
+                case 'sqrt2': 
+                    return findRoot(num1, 2);
+                case 'sqrt3': 
+                    return findRoot(num1, 3);
+                case 'ln': 
+                    return Math.log(num1)
                 default: 
                     return NaN;
             }
@@ -161,6 +169,11 @@
             console.log(x,y)
             return Math.log(x) / Math.log(y);
         } 
+
+        //Calculates root Y of X
+        const findRoot = (x, y) => {
+            return Math.pow(x, 1 / y); // y (sqrt) x = x ^ 1/y
+        }
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
             const { action } = key.dataset
@@ -175,13 +188,13 @@
                 action === 'multiply' ||
                 action === 'divide' ||
                 action === 'xy' ||
-                action === 'ylogx'
+                action === 'ylogx' ||
+                action === 'ysqrtx'
             ) return 'operator'
 
             if (
                 action === 'x2' ||
                 action === 'x3' ||
-                //action === 'xy' ||
                 action === 'ex' ||
                 action === '10x'
             ) return 'exponent'
@@ -191,6 +204,16 @@
                 action === 'log3' ||
                 action === 'log10'
             ) return 'logarithm'
+
+            // add in sqrts
+            if (
+                action === 'sqrt2' ||
+                action === 'sqrt3'
+            ) return 'root'
+
+            if (
+                action === 'ln'
+            ) return 'natural log'
 
             if (action === 'sin' ||
                 action === 'cos' ||
@@ -294,6 +317,20 @@
                 return calculateExpression(displayedNum, state.operator)
             }
 
+            if (keyType === 'root') {
+                state.operator = key.dataset.action
+                console.log('in root')
+                console.log(state.operator)
+                return calculateExpression(displayedNum, state.operator)
+            }
+
+            if (keyType === 'natural log') {
+                state.operator = key.dataset.action
+                console.log('in ln')
+                console.log(state.operator)
+                return calculateExpression(displayedNum, state.operator)
+            }
+
 
             if (keyType === 'clear') return 0
 
@@ -307,15 +344,19 @@
                             operator === '10x' ||
                             operator === 'log2' ||
                             operator === 'log3' ||
-                            operator === 'log10'
+                            operator === 'log10' ||
+                            operator === 'sqrt2' ||
+                            operator === 'sqrt3' 
                         ) {
                             return calculateExpression(displayedNum, operator)
                         } else {
-                            
                             return calculateOperation(displayedNum, operator, modValue)
                         }
                         
-                    } else if (previousKeyType === 'exponent' || previousKeyType === 'logarithm') {
+                    } else if (
+                    previousKeyType === 'exponent' || 
+                    previousKeyType === 'logarithm' || 
+                    previousKeyType === 'root') {
                         return calculateExpression(displayedNum, operator)
                     } else {
                         return calculateOperation(firstValue, operator, displayedNum)
@@ -342,7 +383,8 @@
             if (
                 keyType === 'operator' || 
                 keyType === 'exponent' || 
-                keyType === 'logarithm') {
+                keyType === 'logarithm' ||
+                keyType === 'root') {
                 calculator.dataset.operator = key.dataset.action
                 calculator.dataset.firstValue = firstValue &&
                 operator &&
@@ -365,7 +407,8 @@
                 calculator.dataset.modValue = firstValue && (
                 previousKeyType === 'calculate' || 
                 previousKeyType === 'exponent'  || 
-                previousKeyType === 'logarithm')
+                previousKeyType === 'logarithm' ||
+                previousKeyType === 'root')
                 ? modValue
                 : displayedNum
             }
@@ -387,6 +430,11 @@
             if (keyType === 'exponent' && calculator.dataset.operator === 'xy') {
                 key.classList.add('is-depressed')
             }
+
+            if (keyType === 'logarithm' && calculator.dataset.operator === 'ylogx') {
+                key.classList.add('is-depressed')
+            }
+            
             if (keyType === 'clear' && key.textContent !== 'AC') {
                 const clearButton = calculator.querySelector('[data-action=clear]')
                 clearButton.getElementsByTagName("span")[0].textContent = 'AC'
