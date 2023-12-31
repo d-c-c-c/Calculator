@@ -15,8 +15,8 @@
 
         <!-- This is where all of the keys will go -->
         <div class="calculatorKeys">
-            <button class="keyExpression" data-action="t"><span>x!</span></button> <!--Factorial Button-->
-            <button class="keyExpression" data-action="t"><span>EE</span></button> <!--EE: Button for x * 10^y-->
+            <button class="keyExpression" data-action="t"><span>x!(todo)</span></button> <!--Factorial Button-->
+            <button class="keyExpression" data-action="t"><span>EE(todo)</span></button> <!--EE: Button for x * 10^y-->
             <button class="specialNums"><span>e</span></button>
             <button class="specialNums"><span>&pi;</span></button>
 
@@ -305,7 +305,9 @@
                             operator === 'x3' ||
                             operator === 'ex' ||
                             operator === '10x' ||
-                            operator === 'log2'
+                            operator === 'log2' ||
+                            operator === 'log3' ||
+                            operator === 'log10'
                         ) {
                             return calculateExpression(displayedNum, operator)
                         } else {
