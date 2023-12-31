@@ -15,7 +15,7 @@
 
         <!-- This is where all of the keys will go -->
         <div class="calculatorKeys">
-            <button class="keyExpression" data-action="t"><span>x!(todo)</span></button> <!--Factorial Button-->
+            <button class="keyExpression" data-action="factorial"><span>x!</span></button> <!--Factorial Button-->
             <button class="keyExpression" data-action="t"><span>EE(todo)</span></button> <!--EE: Button for x * 10^y-->
             <button class="specialNums"><span>e</span></button>
             <button class="specialNums"><span>&pi;</span></button>
@@ -153,6 +153,8 @@
                     return findRoot(num1, 3);
                 case 'ln': 
                     return Math.log(num1)
+                case 'factorial':
+                    return factorial(num1)
                 default: 
                     return NaN;
             }
@@ -173,6 +175,23 @@
         //Calculates root Y of X
         const findRoot = (x, y) => {
             return Math.pow(x, 1 / y); // y (root) x = x ^ 1/y
+        }
+
+        //Finds the factorial of the input number
+        const factorial = (num) => {
+            //Factorial cannot be negative
+            if (num < 0) {
+                return 'Error'
+            } else if (num === 0) {
+                return 1 // 0! = 1
+            } else {
+                result = 1
+                for (i = 1; i <= num; i++) {
+                    result *= i;
+                }
+                return result
+            }
+
         }
         // Returns the type of key that the user clicked
         const getKeyType = (key) => {
@@ -214,6 +233,10 @@
                 action === 'ln'
             ) return 'natural log'
 
+            if(
+                action === 'factorial'
+            ) return 'factorial'
+
             if (action === 'sin' ||
                 action === 'cos' ||
                 action === 'tan' 
@@ -236,9 +259,7 @@
                 modValue,
                 previousKeyType
             } = state
-            // console.log(keyType)
-            // console.log(keyContent)
-            
+
             if (keyType === 'number') {
                 if (displayedNum === '0' ||
                 previousKeyType === 'operator' ||
@@ -270,12 +291,6 @@
             }
 
             if (keyType === 'operator') {
-                //state.operator = ''
-                console.log('current key type:', keyType)
-                console.log("previous key type:",previousKeyType)
-                console.log('state operator', operator)
-                console.log('first value:', firstValue)
-                console.log(firstValue, operator, displayedNum)
                 if (firstValue &&
                 operator &&
                 previousKeyType !== 'operator' &&
@@ -304,29 +319,27 @@
             //Implement logic to work with calculate (Might not be necessary)
             if (keyType === 'trig') {
                 state.operator = key.dataset.action
-                console.log('in trig')
-                console.log(state.operator)
                 return calculateTrig(displayedNum, state.operator)
             }
 
             if (keyType === 'logarithm') {
                 state.operator = key.dataset.action
-                console.log('in log')
-                console.log(state.operator)
                 return calculateExpression(displayedNum, state.operator)
             }
 
             if (keyType === 'root') {
                 state.operator = key.dataset.action
-                console.log('in root')
-                console.log(state.operator)
                 return calculateExpression(displayedNum, state.operator)
             }
 
             if (keyType === 'natural log') {
                 state.operator = key.dataset.action
-                console.log('in ln')
-                console.log(state.operator)
+                return calculateExpression(displayedNum, state.operator)
+            }
+
+            if (keyType === 'factorial') {
+                state.operator = key.dataset.action
+                console.log('in fact')
                 return calculateExpression(displayedNum, state.operator)
             }
 
